@@ -1,0 +1,119 @@
+{% extends "base.html" %}
+
+{% block title %}Home | {{ config.title }}{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-container">
+        <div class="hero-content">
+            <h1 class="hero-title">Hi, I'm {{ config.name }}</h1>
+            <p class="hero-subtitle">Full Stack Developer</p>
+            <p class="hero-description">{{ config.description }}</p>
+            <div class="hero-buttons">
+                <a href="{{ url_for('main.projects_page') }}" class="btn btn-primary">View Projects</a>
+                <a href="{{ url_for('main.contact') }}" class="btn btn-secondary">Contact Me</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="hero-avatar">
+                <img src="{{ url_for('static', filename='images/myphoto.jpg') }}" alt="">
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="featured-projects">
+    <div class="container">
+        <h2 class="section-title">Featured Projects</h2>
+        {% if featured_projects %}
+        <div class="projects-grid">
+            {% for project in featured_projects %}
+            <div class="project-card">
+                <div class="project-image">
+                    {% if project.image_url %}
+                    <img src="{{ project.image_url }}" alt="{{ project.title }}">
+                    {% else %}
+                    <i class="fas fa-code"></i>
+                    {% endif %}
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">{{ project.title }}</h3>
+                    <p class="project-description">{{ project.description }}</p>
+                    <div class="project-tech">
+                        {% for tech in project.get_technologies_list() %}
+                        <span class="tech-tag">{{ tech }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="project-links">
+                        {% if project.live_url %}
+                        <a href="{{ project.live_url }}" class="project-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Live Demo
+                        </a>
+                        {% endif %}
+                        {% if project.github_url %}
+                        <a href="{{ project.github_url }}" class="project-link" target="_blank">
+                            <i class="fab fa-github"></i> Code
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-projects">
+            <div class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <h3>No Featured Projects Yet</h3>
+                <p>Featured projects are being added soon!</p>
+            </div>
+        </div>
+        {% endif %}
+        <div class="section-cta">
+            <a href="{{ url_for('main.projects_page') }}" class="btn btn-outline">View All Projects</a>
+        </div>
+    </div>
+</section>
+
+<section class="skills-preview">
+    <div class="container">
+        <h2 class="section-title">Technical Skills</h2>
+        {% if featured_skills %}
+        <div class="skills-grid">
+            {% for skill in featured_skills %}
+            <div class="skill-item">
+                <div class="skill-header">
+                    <span class="skill-name">{{ skill.name }}</span>
+                    <span class="skill-level">{{ skill.proficiency }}%</span>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-progress" style="width: {{ skill.proficiency }}%"></div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-skills">
+            <div class="empty-state">
+                <i class="fas fa-tools"></i>
+                <h3>No Skills Featured Yet</h3>
+                <p>Technical skills are being added soon!</p>
+            </div>
+        </div>
+        {% endif %}
+        <div class="section-cta">
+            <a href="{{ url_for('main.about') }}" class="btn btn-outline">Learn More About Me</a>
+        </div>
+    </div>
+</section>
+
+<section class="contact-cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Let's Work Together</h2>
+            <p>Have a project in mind? I'd love to hear about it. Let's create something amazing together.</p>
+            <a href="{{ url_for('main.contact') }}" class="btn btn-primary btn-large">Get In Touch</a>
+        </div>
+    </div>
+</section>
+{% endblock %}

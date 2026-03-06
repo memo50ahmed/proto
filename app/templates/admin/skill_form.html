@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ action }} Skill - Portfolio Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .sidebar-header {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-header h4 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0;
+            margin-bottom: 0.25rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .sidebar .nav-link i {
+            width: 20px;
+            margin-right: 0.75rem;
+        }
+        .sidebar .nav-link.text-danger {
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1rem;
+        }
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        .top-header {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding: 0.75rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            color: white;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        .btn-cancel {
+            background: #6c757d;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+        .help-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        .proficiency-preview {
+            background: #e9ecef;
+            border-radius: 10px;
+            height: 20px;
+            margin: 0.5rem 0;
+        }
+        .proficiency-fill {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ff8787 100%);
+            border-radius: 10px;
+            height: 100%;
+            transition: width 0.3s ease;
+        }
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+                padding-top: 4rem;
+            }
+            .mobile-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="admin-wrapper">
+        <!-- Left Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h4><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h4>
+                <small class="text-white-50">Portfolio Management</small>
+            </div>
+            <div class="sidebar-nav">
+                <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+                    <i class="fas fa-home"></i>Dashboard
+                </a>
+                <a class="nav-link" href="{{ url_for('admin.projects') }}">
+                    <i class="fas fa-project-diagram"></i>Projects
+                </a>
+                <a class="nav-link" href="{{ url_for('admin.certifications') }}">
+                    <i class="fas fa-certificate"></i>Certifications
+                </a>
+                <a class="nav-link" href="{{ url_for('admin.competitions') }}">
+                    <i class="fas fa-trophy"></i>Competitions
+                </a>
+                <a class="nav-link" href="{{ url_for('admin.courses') }}">
+                    <i class="fas fa-graduation-cap"></i>Courses
+                </a>
+                <a class="nav-link active" href="{{ url_for('admin.skills') }}">
+                    <i class="fas fa-tools"></i>Skills
+                </a>
+                <a class="nav-link text-danger" href="{{ url_for('admin.logout') }}">
+                    <i class="fas fa-sign-out-alt"></i>Logout
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="main-content">
+            <div class="top-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h3 mb-0">{{ action }} Skill</h1>
+                        <p class="text-muted mb-0">
+                            {% if skill %}Edit skill details{% else %}Create a new skill entry{% endif %}
+                        </p>
+                    </div>
+                    <a href="{{ url_for('admin.skills') }}" class="btn-cancel">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Skills
+                    </a>
+                </div>
+            </div>
+
+            <div class="form-container">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="name" class="form-label">Skill Name *</label>
+                                <input type="text" class="form-control" id="name" name="name" 
+                                       value="{{ skill.name if skill else '' }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="category" class="form-label">Category *</label>
+                                <select class="form-select" id="category" name="category" required>
+                                    <option value="">Select a category</option>
+                                    <option value="Programming" {% if skill and skill.category == 'Programming' %}selected{% endif %}>Programming</option>
+                                    <option value="Design" {% if skill and skill.category == 'Design' %}selected{% endif %}>Design</option>
+                                    <option value="Tools" {% if skill and skill.category == 'Tools' %}selected{% endif %}>Tools</option>
+                                    <option value="Database" {% if skill and skill.category == 'Database' %}selected{% endif %}>Database</option>
+                                    <option value="Cloud" {% if skill and skill.category == 'Cloud' %}selected{% endif %}>Cloud</option>
+                                    <option value="DevOps" {% if skill and skill.category == 'DevOps' %}selected{% endif %}>DevOps</option>
+                                    <option value="Soft Skills" {% if skill and skill.category == 'Soft Skills' %}selected{% endif %}>Soft Skills</option>
+                                    <option value="Other" {% if skill and skill.category == 'Other' %}selected{% endif %}>Other</option>
+                                </select>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="proficiency" class="form-label">Proficiency Level (0-100) *</label>
+                                        <input type="range" class="form-range" id="proficiency" name="proficiency" 
+                                               min="0" max="100" value="{{ skill.proficiency if skill else 50 }}" required>
+                                        <div class="d-flex justify-content-between">
+                                            <small>Beginner</small>
+                                            <small id="proficiency-value">{{ skill.proficiency if skill else 50 }}%</small>
+                                            <small>Expert</small>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="years_experience" class="form-label">Years of Experience</label>
+                                        <input type="number" class="form-control" id="years_experience" name="years_experience" 
+                                               value="{{ skill.years_experience if skill else '' }}" 
+                                               step="0.1" min="0" max="50">
+                                        <div class="help-text">Optional: Number of years using this skill</div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="4">{{ skill.description if skill else '' }}</textarea>
+                                <div class="help-text">Describe your experience with this skill</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Skill Settings</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="featured" name="featured" 
+                                                   {% if skill and skill.featured %}checked{% endif %}>
+                                            <label class="form-check-label" for="featured">
+                                                <strong>Featured Skill</strong>
+                                                <div class="help-text">Display this skill prominently on the about page</div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+
+                                    <h6><i class="fas fa-info-circle me-2"></i>Preview</h6>
+                                    <div class="alert alert-info">
+                                        <small>
+                                            <strong>Name:</strong> <span id="preview-name">{{ skill.name if skill else 'Your Skill Name' }}</span><br>
+                                            <strong>Category:</strong> <span id="preview-category">{{ skill.category if skill else 'Skill Category' }}</span><br>
+                                            <strong>Proficiency:</strong> <span id="preview-proficiency">{{ skill.proficiency if skill else 50 }}%</span>
+                                        </small>
+                                        <div class="proficiency-preview mt-2">
+                                            <div class="proficiency-fill" id="preview-bar" style="width: {{ skill.proficiency if skill else 50 }}%"></div>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+
+                                    <h6><i class="fas fa-lightbulb me-2"></i>Tips</h6>
+                                    <div class="alert alert-success">
+                                        <small>
+                                            <strong>Proficiency Levels:</strong><br>
+                                            • 0-39%: Learning<br>
+                                            • 40-59%: Beginner<br>
+                                            • 60-74%: Intermediate<br>
+                                            • 75-89%: Advanced<br>
+                                            • 90-100%: Expert
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ url_for('admin.skills') }}" class="btn-cancel">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-save me-2"></i>{{ action }} Skill
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Live preview for proficiency
+        const proficiencySlider = document.getElementById('proficiency');
+        const proficiencyValue = document.getElementById('proficiency-value');
+        const previewProficiency = document.getElementById('preview-proficiency');
+        const previewBar = document.getElementById('preview-bar');
+
+        proficiencySlider.addEventListener('input', function(e) {
+            const value = e.target.value;
+            proficiencyValue.textContent = value + '%';
+            previewProficiency.textContent = value + '%';
+            previewBar.style.width = value + '%';
+        });
+
+        // Live preview for name and category
+        document.getElementById('name').addEventListener('input', function(e) {
+            document.getElementById('preview-name').textContent = e.target.value || 'Your Skill Name';
+        });
+
+        document.getElementById('category').addEventListener('change', function(e) {
+            document.getElementById('preview-category').textContent = e.target.value || 'Skill Category';
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !toggle.contains(event.target) &&
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

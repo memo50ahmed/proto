@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ action }} Project - Portfolio Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        .sidebar {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: white;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin-bottom: 0.5rem;
+            transition: all 0.3s ease;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .sidebar .nav-link i {
+            width: 20px;
+        }
+        .main-content {
+            padding: 2rem;
+        }
+        .page-header {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding: 0.75rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            color: white;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        .btn-cancel {
+            background: #6c757d;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+        .help-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Sidebar -->
+            <nav class="col-md-3 col-lg-2 d-md-block sidebar collapse">
+                <div class="position-sticky pt-3">
+                    <div class="text-center mb-4">
+                        <h4><i class="fas fa-tachometer-alt me-2"></i>Admin</h4>
+                    </div>
+                    <ul class="nav flex-column">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+                                <i class="fas fa-home me-2"></i>Dashboard
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link active" href="{{ url_for('admin.projects') }}">
+                                <i class="fas fa-project-diagram me-2"></i>Projects
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin.certifications') }}">
+                                <i class="fas fa-certificate me-2"></i>Certifications
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin.competitions') }}">
+                                <i class="fas fa-trophy me-2"></i>Competitions
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="{{ url_for('admin.courses') }}">
+                                <i class="fas fa-graduation-cap me-2"></i>Courses
+                            </a>
+                        </li>
+                        <li class="nav-item mt-3">
+                            <a class="nav-link text-danger" href="{{ url_for('admin.logout') }}">
+                                <i class="fas fa-sign-out-alt me-2"></i>Logout
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </nav>
+
+            <!-- Main content -->
+            <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4 main-content">
+                <div class="page-header">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <div>
+                            <h1 class="h3 mb-0">{{ action }} Project</h1>
+                            <p class="text-muted mb-0">
+                                {% if project %}Edit project details{% else %}Create a new project{% endif %}
+                            </p>
+                        </div>
+                        <a href="{{ url_for('admin.projects') }}" class="btn-cancel">
+                            <i class="fas fa-arrow-left me-2"></i>Back to Projects
+                        </a>
+                    </div>
+                </div>
+
+                <div class="form-container">
+                    <form method="POST">
+                        <div class="row">
+                            <div class="col-md-8">
+                                <div class="mb-3">
+                                    <label for="title" class="form-label">Project Title *</label>
+                                    <input type="text" class="form-control" id="title" name="title" 
+                                           value="{{ project.title if project else '' }}" required>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="description" class="form-label">Description *</label>
+                                    <textarea class="form-control" id="description" name="description" rows="4" required>{{ project.description if project else '' }}</textarea>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="technologies" class="form-label">Technologies *</label>
+                                    <input type="text" class="form-control" id="technologies" name="technologies" 
+                                           value="{{ project.technologies if project else '' }}" required>
+                                    <div class="help-text">Enter technologies separated by commas (e.g., Python, Flask, JavaScript)</div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="live_url" class="form-label">Live Demo URL</label>
+                                            <input type="url" class="form-control" id="live_url" name="live_url" 
+                                                   value="{{ project.live_url if project else '' }}">
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="mb-3">
+                                            <label for="github_url" class="form-label">GitHub URL</label>
+                                            <input type="url" class="form-control" id="github_url" name="github_url" 
+                                                   value="{{ project.github_url if project else '' }}">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="mb-3">
+                                    <label for="image_url" class="form-label">Image URL</label>
+                                    <input type="text" class="form-control" id="image_url" name="image_url" 
+                                           value="{{ project.image_url if project else '' }}">
+                                    <div class="help-text">Path to project image (e.g., static/images/project1.jpg)</div>
+                                </div>
+                            </div>
+
+                            <div class="col-md-4">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Project Settings</h5>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="mb-3">
+                                            <div class="form-check">
+                                                <input class="form-check-input" type="checkbox" id="featured" name="featured" 
+                                                       {% if project and project.featured %}checked{% endif %}>
+                                                <label class="form-check-label" for="featured">
+                                                    <strong>Featured Project</strong>
+                                                    <div class="help-text">Display this project prominently on the homepage</div>
+                                                </label>
+                                            </div>
+                                        </div>
+
+                                        <hr>
+
+                                        <h6><i class="fas fa-info-circle me-2"></i>Preview</h6>
+                                        <div class="alert alert-info">
+                                            <small>
+                                                <strong>Title:</strong> <span id="preview-title">{{ project.title if project else 'Your Project Title' }}</span><br>
+                                                <strong>Technologies:</strong> <span id="preview-tech">{{ project.technologies if project else 'Python, Flask' }}</span>
+                                            </small>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-between mt-4">
+                            <a href="{{ url_for('admin.projects') }}" class="btn-cancel">
+                                <i class="fas fa-times me-2"></i>Cancel
+                            </a>
+                            <button type="submit" class="btn-submit">
+                                <i class="fas fa-save me-2"></i>{{ action }} Project
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Live preview
+        document.getElementById('title').addEventListener('input', function(e) {
+            document.getElementById('preview-title').textContent = e.target.value || 'Your Project Title';
+        });
+
+        document.getElementById('technologies').addEventListener('input', function(e) {
+            document.getElementById('preview-tech').textContent = e.target.value || 'Python, Flask';
+        });
+    </script>
+</body>
+</html>

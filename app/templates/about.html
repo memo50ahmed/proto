@@ -1,0 +1,298 @@
+{% extends "base.html" %}
+
+{% block title %}About | {{ config.title }}{% endblock %}
+
+{% block content %}
+<section class="about-hero">
+    <div class="container">
+        <div class="about-content">
+            <div class="about-text">
+                <h1>About Me</h1>
+                <p class="about-intro">
+                    I am a motivated Software Engineer with hands-on experience in web development and
+                    accessibility-focused projects. I
+                    specialize in creating user-friendly platforms that support people with disabilities by integrating
+                    assistive features
+                    and ensuring full accessibility compliance.
+                </p>
+                <p>
+                    I am proficient in Python (Flask), HTML, CSS, JavaScript, Jinja, and SQL Server, with a solid
+                    background in both
+                    frontend and backend development. I have also gained experience through collaborations on innovative
+                    solutions,
+                    showcased in competitions and supported by national training programs.
+
+                    In addition to my technical expertise, I am fluent in Arabic and English, with intermediate
+                    proficiency in French, which
+                    allows me to communicate effectively in multicultural environments
+                </p>
+            </div>
+            <div class="about-image">
+                <div class="about-avatar">
+                    <img src="{{ url_for('static', filename='images/myphoto.jpg') }}" alt="Profile">
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="experience-section">
+    <div class="container">
+        <h2 class="section-title">Experience & Education</h2>
+
+        <div class="timeline">
+            {% if experiences %}
+            {% for experience in experiences %}
+            <div class="timeline-item">
+                <div class="timeline-content">
+                    <h3>{{ experience.title }}</h3>
+                    <p class="timeline-company">{{ experience.company }}</p>
+
+                    <p class="timeline-date">
+                        <i class="fas fa-calendar me-1"></i>
+                        {{ experience.start_date.strftime('%B %Y') }}
+                        {% if experience.is_current() %}
+                        - Present
+                        {% else %}
+                        {% if experience.end_date %}
+                        - {{ experience.end_date.strftime('%B %Y') }}
+                        {% endif %}
+                        {% endif %}
+                        <span class="experience-duration">({{ experience.get_duration() }})</span>
+                    </p>
+
+                    {% if experience.description %}
+                    <p class="experience-description">{{ experience.description }}</p>
+                    {% endif %}
+
+                    {% if experience.technologies_used %}
+                    <div class="tech-tags mt-2">
+                        {% for tech in experience.get_technologies_list() %}
+                        <span class="tech-tag"
+                            style="font-size: 0.8rem; background: #eee; padding: 2px 8px; border-radius: 4px; margin-right: 5px;">{{
+                            tech }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            {% endif %}
+
+        </div>
+
+        {% if not experiences %}
+        <div class="empty-state text-center mt-4">
+            <i class="fas fa-briefcase fa-3x mb-3"></i>
+            <h3>No Experience Featured Yet</h3>
+            <p>Work experience is being added soon!</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+<section class="skills-section">
+    <div class="container">
+        <h2 class="section-title">Technical Skills</h2>
+        {% if skills %}
+        <div class="skills-about-grid">
+            {% for skill in skills %}
+            <div class="skill-about-item">
+                <div class="skill-header">
+                    <div class="skill-info">
+                        <h4 class="skill-name">{{ skill.name }}</h4>
+                        <span class="skill-category">{{ skill.category }}</span>
+                    </div>
+                    <div class="skill-level-info">
+                        <span class="skill-percentage">{{ skill.proficiency }}%</span>
+                        <span class="skill-level-text">{{ skill.get_proficiency_level() }}</span>
+                    </div>
+                </div>
+                <div class="skill-bar">
+                    <div class="skill-progress" style="width: {{ skill.proficiency }}%"></div>
+                </div>
+                {% if skill.years_experience %}
+                <p class="skill-experience">{{ skill.years_experience }} years of experience</p>
+                {% endif %}
+                {% if skill.description %}
+                <p class="skill-description">{{ skill.description }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-skills">
+            <div class="empty-state">
+                <i class="fas fa-tools"></i>
+                <h3>No Skills Featured Yet</h3>
+                <p>Technical skills are being added soon!</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="courses-section">
+    <div class="container">
+        <h2 class="section-title">Courses & Training</h2>
+        {% if courses %}
+        <div class="courses-grid">
+            {% for course in courses %}
+            <div class="course-item">
+                <div class="course-image">
+                    {% if course.image_url %}
+                    <img src="{{ course.image_url }}" alt="{{ course.title }}">
+                    {% else %}
+                    <i class="fas fa-graduation-cap"></i>
+                    {% endif %}
+                </div>
+                <div class="course-content">
+                    <h3>{{ course.title }}</h3>
+                    <p class="course-provider">{{ course.provider }}</p>
+                    {% if course.start_date and course.end_date %}
+                    <p class="course-date">{{ course.start_date.strftime('%Y') }}{% if course.start_date !=
+                        course.end_date %} - {{ course.end_date.strftime('%Y') }}{% endif %}</p>
+                    {% elif course.start_date %}
+                    <p class="course-date">{{ course.start_date.strftime('%Y') }}</p>
+                    {% endif %}
+                    {% if course.duration %}
+                    <p class="course-duration">{{ course.duration }}</p>
+                    {% endif %}
+                    <p>{{ course.description }}</p>
+                    {% if course.certificate_url %}
+                    <a href="{{ course.certificate_url }}" download target="_blank" class="course-link">View Certificate</a>
+                    <style>
+                        .course-link{
+                            text-decoration: none;
+                            color: #007bff;
+                            
+                        }
+                    </style>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-graduation-cap"></i>
+            <h3>No Courses Yet</h3>
+            <p>Courses and training programs are being added soon.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="competitions-section">
+    <div class="container">
+        <h2 class="section-title">Competitions & Achievements</h2>
+        {% if competitions %}
+        <div class="competitions-grid">
+            {% for competition in competitions %}
+            <div class="competition-item">
+                <div class="competition-image">
+                    {% if competition.image_url %}
+                    <img src="{{ competition.image_url }}" alt="{{ competition.title }}">
+                    {% else %}
+                    <i class="fas fa-trophy"></i>
+                    {% endif %}
+                </div>
+                <div class="competition-content">
+                    <h3>{{ competition.title }}</h3>
+                    <p class="competition-org">{{ competition.organization }}</p>
+                    {% if competition.date %}
+                    <p class="competition-date">{{ competition.date.strftime('%Y') }}</p>
+                    {% endif %}
+                    {% if competition.position %}
+                    <p class="competition-position">{{ competition.position }}</p>
+                    {% endif %}
+                    {% if competition.project_description %}
+                    <p>{{ competition.project_description }}</p>
+                    {% endif %}
+                    {% if competition.competition_url %}
+                    <a href="{{ competition.competition_url }}" target="_blank" class="competition-link">View
+                        Competition</a>
+                    <style>
+                        .competition-link {
+                            display: inline-block;
+                            margin-top: 10px;
+                            padding: 8px 16px;
+                            background: #007bff;
+                            color: white;
+                            text-decoration: none;
+                            border-radius: 4px;
+                            font-size: 14px;
+                        }
+                        .competition-link:hover {
+                            background: #0056b3;
+                        }
+                    </style>
+                    {% endif %}
+                </div>
+
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-trophy"></i>
+            <h3>No Competitions Yet</h3>
+            <p>Competition achievements are being added soon.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="certificates-section">
+    <div class="container">
+        <h2 class="section-title">Certifications</h2>
+        {% if certifications %}
+        <div class="certificates-grid">
+            {% for certification in certifications %}
+            <div class="certificate-item">
+                <div class="certificate-image">
+                    {% if certification.image_url %}
+                    <img src="{{ certification.image_url }}" alt="{{ certification.title }}">
+                    {% else %}
+                    <i class="fas fa-certificate"></i>
+                    {% endif %}
+                </div>
+                <div class="certificate-content">
+                    <h3>{{ certification.title }}</h3>
+                    <p class="certificate-issuer">{{ certification.issuer }}</p>
+                    {% if certification.issue_date %}
+                    <p class="certificate-date">{{ certification.issue_date.strftime('%Y') }}</p>
+                    {% endif %}
+                    <p>{{ certification.description }}</p>
+                    {% if certification.credential_url %}
+                    <a href="{{ certification.credential_url }}" target="_blank" class="certificate-link">Verify
+                        Certificate</a>
+                    {% endif %}
+                    <style>
+                        .certificate-link {
+                            display: inline-block;
+                            margin-top: 10px;
+                            padding: 8px 16px;
+                            background: #007bff;
+                            color: white;
+                            text-decoration: none;
+                            border-radius: 4px;
+                            font-size: 14px;
+                        }
+                        .certificate-link:hover {
+                            background: #0056b3;
+                        }
+                    </style>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="fas fa-certificate"></i>
+            <h3>No Certifications Yet</h3>
+            <p>Professional certifications are being added soon.</p>
+        </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}
