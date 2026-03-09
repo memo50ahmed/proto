@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ action }} Course - Portfolio Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .sidebar-header {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-header h4 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0;
+            margin-bottom: 0.25rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .sidebar .nav-link i {
+            width: 20px;
+            margin-right: 0.75rem;
+        }
+        .sidebar .nav-link.text-danger {
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1rem;
+        }
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        .top-header {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding: 0.75rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            color: white;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        .btn-cancel {
+            background: #6c757d;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+        .help-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+                padding-top: 4rem;
+            }
+            .mobile-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="admin-wrapper">
+        <!-- Left Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h4><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h4>
+                <small class="text-white-50">Portfolio Management</small>
+            </div>
+            <div class="sidebar-nav">
+                <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+                    <i class="fas fa-home"></i>Dashboard
+                </a>
+                <a class="nav-link" href="{{ url_for('admin.projects') }}">
+                    <i class="fas fa-project-diagram"></i>Projects
+                </a>
+                <a class="nav-link" href="{{ url_for('admin.certifications') }}">
+                    <i class="fas fa-certificate"></i>Certifications
+                </a>
+                <a class="nav-link" href="{{ url_for('admin.competitions') }}">
+                    <i class="fas fa-trophy"></i>Competitions
+                </a>
+                <a class="nav-link active" href="{{ url_for('admin.courses') }}">
+                    <i class="fas fa-graduation-cap"></i>Courses
+                </a>
+                <a class="nav-link text-danger" href="{{ url_for('admin.logout') }}">
+                    <i class="fas fa-sign-out-alt"></i>Logout
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="main-content">
+            <div class="top-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h3 mb-0">{{ action }} Course</h1>
+                        <p class="text-muted mb-0">
+                            {% if course %}Edit course details{% else %}Create a new course entry{% endif %}
+                        </p>
+                    </div>
+                    <a href="{{ url_for('admin.courses') }}" class="btn-cancel">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Courses
+                    </a>
+                </div>
+            </div>
+
+            <div class="form-container">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Course Title *</label>
+                                <input type="text" class="form-control" id="title" name="title" 
+                                       value="{{ course.title if course else '' }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="provider" class="form-label">Course Provider *</label>
+                                <input type="text" class="form-control" id="provider" name="provider" 
+                                       value="{{ course.provider if course else '' }}" required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="start_date" class="form-label">Start Date</label>
+                                        <input type="date" class="form-control" id="start_date" name="start_date" 
+                                               value="{{ course.start_date.strftime('%Y-%m-%d') if course and course.start_date else '' }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="end_date" class="form-label">End Date</label>
+                                        <input type="date" class="form-control" id="end_date" name="end_date" 
+                                               value="{{ course.end_date.strftime('%Y-%m-%d') if course and course.end_date else '' }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="duration" class="form-label">Duration</label>
+                                <input type="text" class="form-control" id="duration" name="duration" 
+                                       value="{{ course.duration if course else '' }}"
+                                       placeholder="e.g., 3 months, 40 hours, 6 weeks">
+                                <div class="help-text">Course duration in human-readable format</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="certificate_url" class="form-label">Certificate URL</label>
+                                <input type="url" class="form-control" id="certificate_url" name="certificate_url" 
+                                       value="{{ course.certificate_url if course else '' }}">
+                                <div class="help-text">Link to your course certificate or completion page</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="image_url" class="form-label">Image URL</label>
+                                <input type="text" class="form-control" id="image_url" name="image_url" 
+                                       value="{{ course.image_url if course else '' }}">
+                                <div class="help-text">Path to course image (e.g., static/images/course.jpg)</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="4">{{ course.description if course else '' }}</textarea>
+                                <div class="help-text">Describe what you learned and key takeaways</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="skills_learned" class="form-label">Skills Learned</label>
+                                <input type="text" class="form-control" id="skills_learned" name="skills_learned" 
+                                       value="{{ course.skills_learned if course else '' }}"
+                                       placeholder="e.g., Python, Machine Learning, Data Analysis">
+                                <div class="help-text">Enter skills separated by commas</div>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Course Settings</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="featured" name="featured" 
+                                                   {% if course and course.featured %}checked{% endif %}>
+                                            <label class="form-check-label" for="featured">
+                                                <strong>Featured Course</strong>
+                                                <div class="help-text">Display this course prominently on the about page</div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+
+                                    <h6><i class="fas fa-info-circle me-2"></i>Preview</h6>
+                                    <div class="alert alert-info">
+                                        <small>
+                                            <strong>Title:</strong> <span id="preview-title">{{ course.title if course else 'Your Course Title' }}</span><br>
+                                            <strong>Provider:</strong> <span id="preview-provider">{{ course.provider if course else 'Course Provider' }}</span><br>
+                                            <strong>Duration:</strong> <span id="preview-duration">{{ course.duration if course else 'Course Duration' }}</span>
+                                        </small>
+                                    </div>
+
+                                    <hr>
+
+                                    <h6><i class="fas fa-lightbulb me-2"></i>Tips</h6>
+                                    <div class="alert alert-success">
+                                        <small>
+                                            <strong>Duration Examples:</strong><br>
+                                            • 3 months<br>
+                                            • 40 hours<br>
+                                            • 6 weeks<br>
+                                            • 2 semesters<br>
+                                            • Self-paced
+                                        </small>
+                                    </div>
+
+                                    <div class="alert alert-warning">
+                                        <small>
+                                            <strong>Skills Format:</strong><br>
+                                            Separate skills with commas:<br>
+                                            Python, Django, REST API
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ url_for('admin.courses') }}" class="btn-cancel">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-save me-2"></i>{{ action }} Course
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Live preview
+        document.getElementById('title').addEventListener('input', function(e) {
+            document.getElementById('preview-title').textContent = e.target.value || 'Your Course Title';
+        });
+
+        document.getElementById('provider').addEventListener('input', function(e) {
+            document.getElementById('preview-provider').textContent = e.target.value || 'Course Provider';
+        });
+
+        document.getElementById('duration').addEventListener('input', function(e) {
+            document.getElementById('preview-duration').textContent = e.target.value || 'Course Duration';
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !toggle.contains(event.target) &&
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

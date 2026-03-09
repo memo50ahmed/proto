@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ action }} Certification - Portfolio Admin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            z-index: 1000;
+            transition: transform 0.3s ease;
+        }
+        .sidebar-header {
+            padding: 1.5rem;
+            text-align: center;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .sidebar-header h4 {
+            margin: 0;
+            font-size: 1.25rem;
+            font-weight: 600;
+        }
+        .sidebar-nav {
+            padding: 1rem 0;
+        }
+        .sidebar .nav-link {
+            color: rgba(255, 255, 255, 0.8);
+            padding: 0.75rem 1.5rem;
+            border-radius: 0;
+            margin-bottom: 0.25rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        .sidebar .nav-link:hover,
+        .sidebar .nav-link.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+        .sidebar .nav-link i {
+            width: 20px;
+            margin-right: 0.75rem;
+        }
+        .sidebar .nav-link.text-danger {
+            margin-top: 2rem;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            padding-top: 1rem;
+        }
+        .main-content {
+            flex: 1;
+            margin-left: 250px;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+        .top-header {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-container {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .form-control, .form-select {
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            padding: 0.75rem;
+        }
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        .btn-submit {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            color: white;
+            font-weight: 600;
+            transition: transform 0.2s ease;
+        }
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        .btn-cancel {
+            background: #6c757d;
+            border: none;
+            border-radius: 8px;
+            padding: 0.75rem 2rem;
+            color: white;
+            font-weight: 600;
+            text-decoration: none;
+            display: inline-block;
+            transition: transform 0.2s ease;
+        }
+        .btn-cancel:hover {
+            transform: translateY(-2px);
+            color: white;
+        }
+        .form-check-input:checked {
+            background-color: #667eea;
+            border-color: #667eea;
+        }
+        .help-text {
+            font-size: 0.875rem;
+            color: #6c757d;
+            margin-top: 0.25rem;
+        }
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 1rem;
+            left: 1rem;
+            z-index: 1001;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            color: white;
+            padding: 0.5rem;
+            border-radius: 8px;
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 1rem;
+                padding-top: 4rem;
+            }
+            .mobile-toggle {
+                display: block;
+            }
+        }
+    </style>
+</head>
+<body>
+    <button class="mobile-toggle" onclick="toggleSidebar()">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <div class="admin-wrapper">
+        <!-- Left Sidebar -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h4><i class="fas fa-tachometer-alt me-2"></i>Admin Panel</h4>
+                <small class="text-white-50">Portfolio Management</small>
+            </div>
+            <div class="sidebar-nav">
+                <a class="nav-link" href="{{ url_for('admin.dashboard') }}">
+                    <i class="fas fa-home"></i>Dashboard
+                </a>
+                <a class="nav-link" href="{{ url_for('admin.projects') }}">
+                    <i class="fas fa-project-diagram"></i>Projects
+                </a>
+                <a class="nav-link active" href="{{ url_for('admin.certifications') }}">
+                    <i class="fas fa-certificate"></i>Certifications
+                </a>
+                <a class="nav-link" href="{{ url_for('admin.competitions') }}">
+                    <i class="fas fa-trophy"></i>Competitions
+                </a>
+                <a class="nav-link" href="{{ url_for('admin.courses') }}">
+                    <i class="fas fa-graduation-cap"></i>Courses
+                </a>
+                <a class="nav-link text-danger" href="{{ url_for('admin.logout') }}">
+                    <i class="fas fa-sign-out-alt"></i>Logout
+                </a>
+            </div>
+        </nav>
+
+        <!-- Main content -->
+        <main class="main-content">
+            <div class="top-header">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1 class="h3 mb-0">{{ action }} Certification</h1>
+                        <p class="text-muted mb-0">
+                            {% if certification %}Edit certification details{% else %}Create a new certification{% endif %}
+                        </p>
+                    </div>
+                    <a href="{{ url_for('admin.certifications') }}" class="btn-cancel">
+                        <i class="fas fa-arrow-left me-2"></i>Back to Certifications
+                    </a>
+                </div>
+            </div>
+
+            <div class="form-container">
+                <form method="POST">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="mb-3">
+                                <label for="title" class="form-label">Certification Title *</label>
+                                <input type="text" class="form-control" id="title" name="title" 
+                                       value="{{ certification.title if certification else '' }}" required>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="issuer" class="form-label">Issuing Organization *</label>
+                                <input type="text" class="form-control" id="issuer" name="issuer" 
+                                       value="{{ certification.issuer if certification else '' }}" required>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="issue_date" class="form-label">Issue Date</label>
+                                        <input type="date" class="form-control" id="issue_date" name="issue_date" 
+                                               value="{{ certification.issue_date.strftime('%Y-%m-%d') if certification and certification.issue_date else '' }}">
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="mb-3">
+                                        <label for="expiry_date" class="form-label">Expiry Date</label>
+                                        <input type="date" class="form-control" id="expiry_date" name="expiry_date" 
+                                               value="{{ certification.expiry_date.strftime('%Y-%m-%d') if certification and certification.expiry_date else '' }}">
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="credential_id" class="form-label">Credential ID</label>
+                                <input type="text" class="form-control" id="credential_id" name="credential_id" 
+                                       value="{{ certification.credential_id if certification else '' }}">
+                                <div class="help-text">Unique identifier for verification</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="credential_url" class="form-label">Verification URL</label>
+                                <input type="url" class="form-control" id="credential_url" name="credential_url" 
+                                       value="{{ certification.credential_url if certification else '' }}">
+                                <div class="help-text">Link to verify the certification</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="image_url" class="form-label">Image URL</label>
+                                <input type="text" class="form-control" id="image_url" name="image_url" 
+                                       value="{{ certification.image_url if certification else '' }}">
+                                <div class="help-text">Path to certification image (e.g., static/images/cert.jpg)</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="description" class="form-label">Description</label>
+                                <textarea class="form-control" id="description" name="description" rows="4">{{ certification.description if certification else '' }}</textarea>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h5 class="mb-0"><i class="fas fa-cog me-2"></i>Certification Settings</h5>
+                                </div>
+                                <div class="card-body">
+                                    <div class="mb-3">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="featured" name="featured" 
+                                                   {% if certification and certification.featured %}checked{% endif %}>
+                                            <label class="form-check-label" for="featured">
+                                                <strong>Featured Certification</strong>
+                                                <div class="help-text">Display this certification prominently on the about page</div>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <hr>
+
+                                    <h6><i class="fas fa-info-circle me-2"></i>Preview</h6>
+                                    <div class="alert alert-info">
+                                        <small>
+                                            <strong>Title:</strong> <span id="preview-title">{{ certification.title if certification else 'Your Certification Title' }}</span><br>
+                                            <strong>Issuer:</strong> <span id="preview-issuer">{{ certification.issuer if certification else 'Certification Authority' }}</span>
+                                        </small>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="d-flex justify-content-between mt-4">
+                        <a href="{{ url_for('admin.certifications') }}" class="btn-cancel">
+                            <i class="fas fa-times me-2"></i>Cancel
+                        </a>
+                        <button type="submit" class="btn-submit">
+                            <i class="fas fa-save me-2"></i>{{ action }} Certification
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('active');
+        }
+
+        // Live preview
+        document.getElementById('title').addEventListener('input', function(e) {
+            document.getElementById('preview-title').textContent = e.target.value || 'Your Certification Title';
+        });
+
+        document.getElementById('issuer').addEventListener('input', function(e) {
+            document.getElementById('preview-issuer').textContent = e.target.value || 'Certification Authority';
+        });
+
+        // Close sidebar when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const sidebar = document.getElementById('sidebar');
+            const toggle = document.querySelector('.mobile-toggle');
+            
+            if (window.innerWidth <= 768 && 
+                !sidebar.contains(event.target) && 
+                !toggle.contains(event.target) &&
+                sidebar.classList.contains('active')) {
+                sidebar.classList.remove('active');
+            }
+        });
+    </script>
+</body>
+</html>

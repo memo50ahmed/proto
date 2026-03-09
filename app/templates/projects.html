@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Projects | {{ config.title }}{% endblock %}
+
+{% block content %}
+<section class="projects-hero">
+    <div class="container">
+        <h1>My Projects</h1>
+        <p>A collection of my work showcasing various technologies and solutions</p>
+    </div>
+</section>
+
+<section class="projects-section">
+    <div class="container">
+        {% if projects %}
+        <div class="projects-grid">
+            {% for project in projects %}
+            <div class="project-card">
+                <div class="project-image">
+                    {% if project.image_url %}
+                    <img src="{{project.image_url}}"
+                        alt="{{ project.title }}">
+                    {% else %}
+                    <i class="fas fa-code"></i>
+                    {% endif %}
+                </div>
+                <div class="project-content">
+                    <h3 class="project-title">{{ project.title }}</h3>
+                    <p class="project-description">{{ project.description }}</p>
+                    <div class="project-tech">
+                        {% for tech in project.get_technologies_list() %}
+                        <span class="tech-tag">{{ tech }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="project-links">
+                        {% if project.live_url %}
+                        <a href="{{ project.live_url }}" class="project-link" target="_blank">
+                            <i class="fas fa-external-link-alt"></i> Live Demo
+                        </a>
+                        {% endif %}
+                        {% if project.github_url %}
+                        <a href="{{ project.github_url }}" class="project-link" target="_blank">
+                            <i class="fab fa-github"></i> Code
+                        </a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="empty-projects">
+            <div class="empty-state">
+                <i class="fas fa-folder-open"></i>
+                <h3>No Projects Yet</h3>
+                <p>Projects are being added soon. Check back later!</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+<section class="projects-cta">
+    <div class="container">
+        <div class="cta-content">
+            <h2>Interested in Collaboration?</h2>
+            <p>I'm always open to discussing new projects and opportunities.</p>
+            <a href="{{ url_for('main.contact') }}" class="btn btn-primary">Let's Talk</a>
+        </div>
+    </div>
+</section>
+{% endblock %}
